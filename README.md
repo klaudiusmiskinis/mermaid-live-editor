@@ -111,6 +111,31 @@ pnpm dev -- --open
 
 This app is created with Svelte Kit.
 
+### Local/offline usage
+
+To run the editor without contacting external services, copy the default
+environment file and clear the settings for analytics, renderer and other
+integrations:
+
+```bash
+cp .env .env.local
+```
+
+Edit `.env.local` so that the following variables are empty:
+
+```bash
+MERMAID_RENDERER_URL=''
+MERMAID_KROKI_RENDERER_URL=''
+MERMAID_ANALYTICS_URL=''
+MERMAID_IS_ENABLED_MERMAID_CHART_LINKS=''
+```
+
+Then start the development server:
+
+```bash
+pnpm dev
+```
+
 ## Release
 
 When a PR is created targeting master, it will be built and deployed by Netlify.
