@@ -1,9 +1,7 @@
-import { C } from '$/constants';
 import type { ErrorHash, MarkerData, State, ValidatedState } from '$/types';
 import { debounce } from 'lodash-es';
 import type { MermaidConfig } from 'mermaid';
 import { derived, get, writable, type Readable } from 'svelte/store';
-import { env } from './env';
 import {
   extractErrorLineText,
   findMostRelevantLineNumber,
@@ -11,8 +9,8 @@ import {
 } from './errorHandling';
 import { parse } from './mermaid';
 import { localStorage, persist } from './persist';
-import { deserializeState, pakoSerde, serializeState } from './serde';
-import { errorDebug, formatJSON, MCBaseURL } from './util';
+import { deserializeState, serializeState } from './serde';
+import { errorDebug, formatJSON } from './util';
 
 export const defaultState: State = {
   code: `flowchart TD
@@ -130,31 +128,12 @@ export const stateStore: Readable<ValidatedState> = derived(
   currentState
 );
 
-export const urlsStore = derived([stateStore], ([{ code, serialized }]) => {
-  const { krokiRendererUrl, rendererUrl } = env;
-  const png = `${rendererUrl}/img/${serialized}?type=png`;
+export const urlsStore = derived([stateStore], ([{ serialized }]) => {
   return {
-    kroki: `${krokiRendererUrl}/mermaid/svg/${pakoSerde.serialize(code)}`,
-    mdCode: `[![](${png})](${window.location.protocol}//${window.location.host}${window.location.pathname}#${serialized})`,
-    mermaidChart: ({
-      medium
-    }: {
-      medium: 'ai_repair' | 'main_menu' | 'save_diagram' | 'share' | 'toggle';
-    }) => {
-      const params = new URLSearchParams({
-        utm_source: C.utmSource,
-        utm_medium: medium
-      }).toString();
-      return {
-        save: `${MCBaseURL}/app/plugin/save?state=${serialized}&${params}`,
-        playground: `${MCBaseURL}/play?${params}#${serialized}`,
-        plugins: `${MCBaseURL}/plugins?${params}`,
-        home: `${MCBaseURL}/?${params}`
-      };
-    },
+    mermaidChart: () => ({ save: '', playground: '', plugins: '', home: '' }),
     new: `${window.location.protocol}//${window.location.host}${window.location.pathname}#${serializeState(defaultState)}`,
-    png,
-    svg: `${rendererUrl}/svg/${serialized}`,
+    png: '',
+    svg: '',
     view: `/view#${serialized}`
   };
 });
