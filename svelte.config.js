@@ -14,6 +14,9 @@ const config = {
     alias: {
       '$/*': './src/lib/*'
     },
+    paths: {
+      base: process.env.BASE_PATH ?? ''
+    },
     adapter: adapter({
       pages: 'docs',
       fallback: '404.html'
