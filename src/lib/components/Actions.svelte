@@ -1,16 +1,12 @@
 <script lang="ts">
   import Card from '$/components/Card/Card.svelte';
   import CopyButton from '$/components/CopyButton.svelte';
-  import CopyInput from '$/components/CopyInput.svelte';
   import { Button } from '$/components/ui/button';
   import { Input } from '$/components/ui/input';
   import { Separator } from '$/components/ui/separator';
   import * as ToggleGroup from '$/components/ui/toggle-group';
-  import { TID } from '$/constants';
-  import { env } from '$/util/env';
-  import { browser } from '$app/environment';
   import { waitForRender } from '$lib/util/autoSync';
-  import { inputStateStore, stateStore, urlsStore } from '$lib/util/state';
+  import { inputStateStore } from '$lib/util/state';
   import { logEvent } from '$lib/util/stats';
   import { version as FAVersion } from '@fortawesome/fontawesome-free/package.json';
   import dayjs from 'dayjs';
@@ -167,20 +163,7 @@ ${svgString}`);
     });
   };
 
-  let gistURL = $state('');
-  stateStore.subscribe(({ loader }) => {
-    if (loader?.type === 'gist') {
-      gistURL = loader.config.url;
-    }
-  });
-
-  const loadGist = () => {
-    if (!gistURL) {
-      return alert('Please enter a Gist URL first');
-    }
-    window.location.href = `${window.location.pathname}?gist=${gistURL}`;
-    logEvent('loadGist');
-  };
+  // Gist loading disabled
 
   let imageSizeMode: 'auto' | 'width' | 'height' = $state('auto');
 
@@ -191,8 +174,6 @@ ${svgString}`);
   });
 
   let imageSize = $state(1080);
-
-  const isNetlify = browser && window.location.host.includes('netlify');
 </script>
 
 {#snippet dualActionButton(text: string, download: (event: Event) => unknown, url?: string)}
@@ -233,34 +214,12 @@ ${svgString}`);
         bind:value={imageSize} />
     </div>
     <div class="flex gap-2">
-      {@render dualActionButton('PNG', onDownloadPNG, $urlsStore.png)}
-      {@render dualActionButton('SVG', onDownloadSVG, $urlsStore.svg)}
-      {#if env.krokiRendererUrl}
-        <a target="_blank" rel="noreferrer" class="flex-grow" href={$urlsStore.kroki}>
-          <Button class="action-btn flex w-full items-center gap-2">
-            <ExternalLinkIcon /> Kroki
-          </Button>
-        </a>
-      {/if}
+      {@render dualActionButton('PNG', onDownloadPNG)}
+      {@render dualActionButton('SVG', onDownloadSVG)}
     </div>
     <Separator />
     {#if isClipboardAvailable()}
       <CopyButton onclick={onCopyClipboard} label="Copy Image" />
-    {/if}
-    {#if $urlsStore.mdCode}
-      <CopyInput value={$urlsStore.mdCode} label="Copy Markdown" testID={TID.copyMarkdown} />
-    {/if}
-
-    <div class="flex w-full items-center gap-2">
-      <Input type="url" bind:value={gistURL} placeholder="Enter Gist URL" />
-      <Button onclick={loadGist}>Load Gist</Button>
-    </div>
-    {#if isNetlify}
-      <div class="flex w-full items-center justify-center">
-        <a class="link text-sm text-gray-500 underline" href="https://netlify.com">
-          This site is powered by Netlify
-        </a>
-      </div>
     {/if}
   </div>
 </Card>
