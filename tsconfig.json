@@ -6,7 +6,8 @@
     "static/**/*.js",
     "static/**/*.json",
     "playwright.config.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "examples/**/*.ts"
   ],
   "compilerOptions": {
     "resolveJsonModule": true,
