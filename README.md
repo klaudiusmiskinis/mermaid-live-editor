@@ -142,3 +142,13 @@ When a PR is created targeting master, it will be built and deployed by Netlify.
 The URL will be indicated in a Comment in the PR.
 
 Once the PR is merged, it will automatically be released.
+
+## GitHub Pages
+
+La aplicación se despliega automáticamente en **GitHub Pages** mediante un flujo
+de trabajo de GitHub Actions. Cada vez que se realiza un push a la rama
+`main`, se ejecuta el proceso de construcción y el contenido generado en la
+carpeta `docs` se publica en la rama `gh-pages`. Tras finalizar, la dirección de
+la página se puede consultar en la pestaña de _Actions_. Si el repositorio aún
+no tiene GitHub Pages habilitado, el paso `actions/configure-pages` se encargará
+de activarlo automáticamente.
